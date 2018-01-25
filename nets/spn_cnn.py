@@ -12,20 +12,19 @@ import numpy as np
 import tensorflow.contrib.slim as slim
 from nets.transformer import spatial_transformer_network
 
-def fnn_spn(inputs,
+def spn_cnn(inputs,
                      num_classes=10,
                      dropout_keep_prob=0.999,
                      is_training=True,
                      reuse=None,
-                     scope='fnn_spn',
-                     global_pool=False):
+                     scope='spncnn'):
     
     input_shape = inputs.get_shape().as_list()
     if len(input_shape) != 4:
         raise ValueError('Invalid input tensor rank, expected 4, was: %d' %
                                          len(input_shape))
 
-    with tf.variable_scope(scope, 'MobilenetV1', [inputs], reuse=reuse) as scope:
+    with tf.variable_scope(scope, 'spncnn', [inputs], reuse=reuse) as scope:
         with slim.arg_scope([slim.batch_norm, slim.dropout],
                                                 is_training=is_training):
             ##############################
@@ -49,8 +48,10 @@ def fnn_spn(inputs,
             theta = slim.fully_connected(net, 6, scope='A_net',weights_initializer = tf.zeros_initializer(), 
                                        biases_initializer=tf.constant_initializer(b.flatten()),activation_fn=None)
             input_fmap = inputs
-            _,H,W,_ = input_shape
-            out_dims = [H/2, W/2]
+            input_shape = tf.shape(inputs)
+            H = input_shape[1]
+            W = input_shape[2]
+            out_dims = [tf.cast(H/2, tf.int32),tf.cast( W/2, tf.int32)]
             net = spatial_transformer_network(input_fmap, theta, out_dims=out_dims)
             
             
@@ -63,7 +64,7 @@ def fnn_spn(inputs,
             net = slim.conv2d(net, 96, [3, 3])
             net = slim.fully_connected(net, 400)
             
-            logits = slim.fully_connected(net, num_classes * 3,activation_fn=None)
+            logits = slim.fully_connected(net, num_classes,activation_fn=None)
             
             
     return logits
