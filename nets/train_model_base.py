@@ -3,7 +3,6 @@ import time
 import tensorflow as tf
 
 import math
-from snrglobaldef import SnrModelType, g_modellogdir
 import tensorflow.contrib.slim as slim
 
 class FLAGS(object):
