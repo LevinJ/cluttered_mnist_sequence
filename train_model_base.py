@@ -247,6 +247,9 @@ class TrainModelBase():
         optimizer = self.__configure_optimizer(learning_rate)
         variables_to_train = self.__get_variables_to_train()
         model.train_op  = slim.learning.create_train_op(model.loss, optimizer, variables_to_train=variables_to_train, global_step= model.global_step)
+        if hasattr(model, 'extra_train_ops'):
+            temp_train_ops = [model.train_op] + model.extra_train_ops
+            model.train_op= tf.group(*temp_train_ops)
 #         
         #set up summary
         model.merged_summay = tf.summary.merge_all()

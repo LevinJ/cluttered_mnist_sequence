@@ -12,7 +12,7 @@ class TrainModel(TrainModelBase):
     def config_training(self):
         self.batch_size = 32
         data_prep = PrepareData()
-        self.train_feeder, self.num_train_samples = data_prep.input_batch_generator('sample_test', is_training=True, batch_size = self.batch_size, get_denselabel = False)
+        self.train_feeder, self.num_train_samples = data_prep.input_batch_generator('sample_test', is_training=True, batch_size = self.batch_size, get_sparselabel = False)
         print('get training image: ', self.num_train_samples)
         
         if g_snrmodeltype == SnrModelType.spncnn:

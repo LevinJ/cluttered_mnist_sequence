@@ -6,6 +6,8 @@ import nets.spn_cnn as spn_cnn
 from tensorflow.contrib import slim
 import snr_mtrics as  snr_mtrics
 
+import preparedata
+
 
 
 class SPNCNNModel(object):
@@ -14,7 +16,7 @@ class SPNCNNModel(object):
         self.NUM_DIGITS = 3
         self.NUM_CLASSES = 10
         #variables to set before training
-        self.inputs = tf.placeholder(tf.float32, [None, None, None, 1])
+        self.inputs = tf.placeholder(tf.float32, [None, preparedata.FLAGS.image_height, preparedata.FLAGS.image_width, 1])
         self.labels = tf.placeholder(tf.int32, [None, self.NUM_DIGITS])
         return
     def build_graph(self):
@@ -76,6 +78,7 @@ class SPNCNNModel(object):
         with slim.arg_scope(spn_cnn.ffn_spn_arg_scope()):
             self.output, self.end_points = spn_cnn.spn_cnn(self.inputs, num_classes= self.NUM_DIGITS * self.NUM_CLASSES, 
                                                                  is_training=is_training,  
+                                                                 prediction_fn=self.prediction_funtion,
                                                                  reuse=None,
                                                                  scope='spncnn')
 

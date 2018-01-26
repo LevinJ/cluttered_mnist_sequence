@@ -16,6 +16,7 @@ def spn_cnn(inputs,
                      num_classes=10,
                      dropout_keep_prob=0.999,
                      is_training=True,
+                     prediction_fn=tf.contrib.layers.softmax,
                      reuse=None,
                      scope='spncnn'):
     
@@ -23,8 +24,8 @@ def spn_cnn(inputs,
     if len(input_shape) != 4:
         raise ValueError('Invalid input tensor rank, expected 4, was: %d' %
                                          len(input_shape))
-
-    with tf.variable_scope(scope, 'spncnn', [inputs], reuse=reuse) as scope:
+    end_points = {}    
+    with tf.variable_scope(scope, [inputs], reuse=reuse) as scope:
         with slim.arg_scope([slim.batch_norm, slim.dropout],
                                                 is_training=is_training):
             ##############################
@@ -38,6 +39,7 @@ def spn_cnn(inputs,
             net = slim.max_pool2d(net, [2, 2])
             net = slim.conv2d(net, 20, [3, 3], scope='l_conv2_loc')
             
+            net = slim.flatten(net)
             net = slim.fully_connected(net, 200, scope='l_dense_loc')
             
             # INIT TRANSFORM TO IDENTITY
@@ -48,10 +50,11 @@ def spn_cnn(inputs,
             theta = slim.fully_connected(net, 6, scope='A_net',weights_initializer = tf.zeros_initializer(), 
                                        biases_initializer=tf.constant_initializer(b.flatten()),activation_fn=None)
             input_fmap = inputs
-            input_shape = tf.shape(inputs)
+            
             H = input_shape[1]
             W = input_shape[2]
-            out_dims = [tf.cast(H/2, tf.int32),tf.cast( W/2, tf.int32)]
+#             out_dims = [tf.cast(H/2, tf.int32),tf.cast( W/2, tf.int32)]
+            out_dims = [int(H/2), int(W/2)]
             net = spatial_transformer_network(input_fmap, theta, out_dims=out_dims)
             
             
@@ -62,12 +65,17 @@ def spn_cnn(inputs,
             net = slim.max_pool2d(net, [2, 2])
             net = slim.conv2d(net, 96, [3, 3])
             net = slim.conv2d(net, 96, [3, 3])
+            
+            net = slim.flatten(net)
             net = slim.fully_connected(net, 400)
             
             logits = slim.fully_connected(net, num_classes,activation_fn=None)
+            end_points['Logits'] = logits
+            if prediction_fn:
+                end_points['Predictions'] = prediction_fn(logits, scope='Predictions')
             
             
-    return logits
+    return logits, end_points
 
 
 def ffn_spn_arg_scope(is_training=True,

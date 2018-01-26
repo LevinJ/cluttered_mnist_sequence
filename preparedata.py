@@ -43,7 +43,7 @@ class PrepareData():
 
         for sample in samples:
             im,label = sample[:FLAGS.image_height * FLAGS.image_width], sample[FLAGS.image_height * FLAGS.image_width:]
-            label = label.tolist()
+            label = label.astype(np.int32).tolist()
             im = np.reshape(im, [FLAGS.image_height, FLAGS.image_width, FLAGS.image_channel])
             batch_inputs.append(im)
             batch_labels.append(label)
