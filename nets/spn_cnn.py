@@ -14,11 +14,10 @@ from nets.transformer import spatial_transformer_network
 
 def spn_cnn(inputs,
                      num_classes=10,
-                     dropout_keep_prob=0.999,
                      is_training=True,
                      prediction_fn=tf.contrib.layers.softmax,
                      reuse=None,
-                     keep_prob = 0.5,
+                     keep_prob = 1.0,
                      scope='spncnn'):
     
     input_shape = inputs.get_shape().as_list()
@@ -52,7 +51,7 @@ def spn_cnn(inputs,
                 b[1, 1] = 1
                 
                 theta = slim.fully_connected(net, 6, scope='A_net',weights_initializer = tf.zeros_initializer(), 
-                                           biases_initializer=tf.constant_initializer(b.flatten()),activation_fn=None)
+                                           biases_initializer=tf.constant_initializer(b.flatten()),normalizer_fn=None, activation_fn=None)
                 input_fmap = inputs
                 
                 H = input_shape[1]
@@ -73,7 +72,7 @@ def spn_cnn(inputs,
                 net = slim.flatten(net)
                 net = slim.fully_connected(net, 400)
                 net = slim.dropout(net)
-                logits = slim.fully_connected(net, num_classes,activation_fn=None)
+                logits = slim.fully_connected(net, num_classes,normalizer_fn=None, activation_fn=None)
                 end_points['Logits'] = logits
                 if prediction_fn:
                     end_points['Predictions'] = prediction_fn(logits, scope='Predictions')
