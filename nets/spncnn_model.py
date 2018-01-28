@@ -18,6 +18,8 @@ class SPNCNNModel(object):
         #variables to set before training
         self.inputs = tf.placeholder(tf.float32, [None, preparedata.FLAGS.image_height, preparedata.FLAGS.image_width, 1])
         self.labels = tf.placeholder(tf.int32, [None, self.NUM_DIGITS])
+        
+        self.keep_prob = 1.0
         return
     def build_graph(self):
         self.global_step = tf.Variable(0, trainable=False, name='global_step')
@@ -79,6 +81,7 @@ class SPNCNNModel(object):
             self.output, self.end_points = spn_cnn.spn_cnn(self.inputs, num_classes= self.NUM_DIGITS * self.NUM_CLASSES, 
                                                                  is_training=is_training,  
                                                                  prediction_fn=self.prediction_funtion,
+                                                                 keep_prob = self.keep_prob,
                                                                  reuse=None,
                                                                  scope='spncnn')
 
@@ -89,6 +92,15 @@ class SPNCNNModel(object):
         loss = tf.nn.sparse_softmax_cross_entropy_with_logits(labels = self.labels, logits = self.output)
         loss = tf.reduce_sum(loss, axis = -1)
         self.loss = tf.reduce_mean(loss)
+        add_regularization_loss = True
+        if add_regularization_loss:
+            #Add regularziaton loss
+            regularization_losses = tf.get_collection(tf.GraphKeys.REGULARIZATION_LOSSES)
+            regularization_loss = tf.add_n(regularization_losses,name='regularization_loss')
+            tf.summary.scalar("regularization_loss", regularization_loss)
+            tf.summary.scalar("recognition_loss", self.loss)
+            self.loss += regularization_loss
+            
         
         return
     

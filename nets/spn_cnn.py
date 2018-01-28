@@ -12,6 +12,12 @@ import numpy as np
 import tensorflow.contrib.slim as slim
 from nets.transformer import spatial_transformer_network
 
+def spatial2d_dropout(net):
+#     net_shape = net.get_shape().as_list() 
+    net_shape = tf.shape(net)
+    noise_shape = [net_shape[0],1,1,net_shape[-1]]
+    return slim.dropout(net, noise_shape=noise_shape)
+    
 def spn_cnn(inputs,
                      num_classes=10,
                      is_training=True,
@@ -37,9 +43,14 @@ def spn_cnn(inputs,
                 net = slim.max_pool2d(net, [2, 2])
                 net = slim.conv2d(net, 20, [3, 3], scope='l_conv0_loc')
                 net = slim.max_pool2d(net, [2, 2])
+#                 net = spatial2d_dropout(net)
+                
                 net = slim.conv2d(net, 20, [3, 3], scope='l_conv1_loc')
                 net = slim.max_pool2d(net, [2, 2])
+#                 net = spatial2d_dropout(net)
+                
                 net = slim.conv2d(net, 20, [3, 3], scope='l_conv2_loc')
+#                 net = spatial2d_dropout(net)
                 
                 net = slim.flatten(net)
                 net = slim.fully_connected(net, 200, scope='l_dense_loc')
@@ -64,10 +75,14 @@ def spn_cnn(inputs,
                 #classification network
                 net = slim.conv2d(net, 96, [3, 3])
                 net = slim.max_pool2d(net, [2, 2])
+                net = spatial2d_dropout(net)
+                
                 net = slim.conv2d(net, 96, [3, 3])
                 net = slim.max_pool2d(net, [2, 2])
+                net = spatial2d_dropout(net)
+                
                 net = slim.conv2d(net, 96, [3, 3])
-                net = slim.conv2d(net, 96, [3, 3])
+                net = spatial2d_dropout(net)
                 
                 net = slim.flatten(net)
                 net = slim.fully_connected(net, 400)
@@ -82,7 +97,7 @@ def spn_cnn(inputs,
 
 
 def ffn_spn_arg_scope(is_training=True,
-                                                     weight_decay=0.00004,
+                                                     weight_decay=0.0001,
                                                      stddev=0.09,
                                                      regularize_depthwise=False,
                                                      batch_norm_decay = 0.9997):
@@ -107,16 +122,16 @@ def ffn_spn_arg_scope(is_training=True,
 
     # Set weight_decay for weights in Conv and DepthSepConv layers.
     weights_init = tf.contrib.layers.xavier_initializer()
-    regularizer = None
+    regularizer = slim.l2_regularizer(weight_decay)
     if regularize_depthwise:
         depthwise_regularizer = regularizer
     else:
         depthwise_regularizer = None
     with slim.arg_scope([slim.conv2d, slim.separable_conv2d, slim.fully_connected],
                                             weights_initializer=weights_init,
-                                            activation_fn=tf.nn.relu, normalizer_fn=slim.batch_norm):
+                                            activation_fn=tf.nn.relu, normalizer_fn=None):
         with slim.arg_scope([slim.batch_norm], **batch_norm_params):
-            with slim.arg_scope([slim.conv2d], weights_regularizer=regularizer):
+            with slim.arg_scope([slim.conv2d, slim.fully_connected], weights_regularizer=regularizer):
                 with slim.arg_scope([slim.separable_conv2d],
                                                         weights_regularizer=depthwise_regularizer) as sc:
                     return sc

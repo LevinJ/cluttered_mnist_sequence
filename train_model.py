@@ -10,7 +10,7 @@ import math
 class TrainModel(TrainModelBase):
     
     def config_training(self):
-        self.batch_size = 32
+        self.batch_size = 100
         data_prep = PrepareData()
         self.train_feeder, self.num_train_samples = data_prep.input_batch_generator('train', is_training=True, batch_size = self.batch_size, get_sparselabel = False)
         print('get training image: ', self.num_train_samples)
@@ -46,13 +46,16 @@ class TrainModel(TrainModelBase):
 class Train_SPNCNNModel(TrainModel):
     def config_training(self):
         TrainModel.config_training(self)
-        self.max_number_of_epochs = 25
+        self.max_number_of_epochs = 80
         return
     def setup_model(self):
         model = SPNCNNModel('train')
         if self.max_number_of_epochs <= 1:
             model.batch_norm_decay = 0.9
             print("adust batch norm decay {}".format(model.batch_norm_decay ))
+        model.keep_prob = 0.75
+        if self.max_number_of_epochs > 60:
+            self.learning_rate = 1e-4
         model.build_graph()
         return model
     

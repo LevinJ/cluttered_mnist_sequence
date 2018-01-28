@@ -4,6 +4,8 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../'
 import os
 import re
 import argparse
+import glob
+import os
 
 
 from snrglobaldef import g_modellogdir
@@ -12,22 +14,32 @@ class RunAllCheckpoints(object):
     def __init__(self):
         
         
+        
         return
     
-    
+    def __get_all_ckpt(self, checkpoint_path):
+        res = []
+        ckpt_files = glob.glob("{}/model.ckpt-*.index".format(g_modellogdir))
+        for file_name in ckpt_files:
+            file_id = os.path.basename(file_name)[11:-6]
+            res.append(int(file_id))
+        res.sort()
+        return res
     
     def get_all_checkpoints(self,checkpoint_path):
+#         
+#         with open("{}/checkpoint".format(g_modellogdir)) as f:
+#             content = f.readlines()
+#         content = [x.strip() for x in content] 
+#         checkpoints = []
+#         for line in content:
+#             m = re.search('all_model_checkpoint_paths:(.*)model.ckpt-(.*)"', line)
+#             if m:
+#                 num = m.group(2)
+#                 checkpoints.append(num)
         
-        with open("{}/checkpoint".format(g_modellogdir)) as f:
-            content = f.readlines()
-        content = [x.strip() for x in content] 
-        checkpoints = []
-        for line in content:
-            m = re.search('all_model_checkpoint_paths:(.*)model.ckpt-(.*)"', line)
-            if m:
-                num = m.group(2)
-                checkpoints.append(num)
-        min_step = 0
+        checkpoints = self.__get_all_ckpt(checkpoint_path)
+        min_step = self.min_step
         step = 100
         last_step = min_step
         sel_checkpoints = []
@@ -50,10 +62,12 @@ class RunAllCheckpoints(object):
         parser = argparse.ArgumentParser()
         parser.add_argument('-l', '--latest',  help='evaluate only the latest checkpoints',  action='store_true')
         parser.add_argument('-c', '--checkpoint_path',  help='which checkpoint(directory) to use',  default="")
+        parser.add_argument('-m', '--min_step',  help='min_step of checkpoint to start with',  type=int, default=0)
         args = parser.parse_args()
         
         self.checkpoint_path = args.checkpoint_path
         self.check_only_latest = args.latest
+        self.min_step = args.min_step
         
         if self.checkpoint_path != '':
             global g_modellogdir
