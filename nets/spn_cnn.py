@@ -69,7 +69,10 @@ def spn_cnn(inputs,
                 W = input_shape[2]
     #             out_dims = [tf.cast(H/2, tf.int32),tf.cast( W/2, tf.int32)]
                 out_dims = [int(H/2), int(W/2)]
-                net = spatial_transformer_network(input_fmap, theta, out_dims=out_dims)
+                net,x_s, y_s = spatial_transformer_network(input_fmap, theta, out_dims=out_dims)
+                end_points["st"] = net
+                end_points["x_s"] = x_s
+                end_points["y_s"] = y_s
                 
                 
                 #classification network
@@ -97,7 +100,7 @@ def spn_cnn(inputs,
 
 
 def ffn_spn_arg_scope(is_training=True,
-                                                     weight_decay=0.0001,
+                                                     weight_decay=0.00001,
                                                      stddev=0.09,
                                                      regularize_depthwise=False,
                                                      batch_norm_decay = 0.9997):

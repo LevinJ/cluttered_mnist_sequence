@@ -46,7 +46,7 @@ class TrainModel(TrainModelBase):
 class Train_SPNCNNModel(TrainModel):
     def config_training(self):
         TrainModel.config_training(self)
-        self.max_number_of_epochs = 80
+        self.max_number_of_epochs = 50
         return
     def setup_model(self):
         model = SPNCNNModel('train')
@@ -54,7 +54,7 @@ class Train_SPNCNNModel(TrainModel):
             model.batch_norm_decay = 0.9
             print("adust batch norm decay {}".format(model.batch_norm_decay ))
         model.keep_prob = 0.75
-        if self.max_number_of_epochs > 60:
+        if self.max_number_of_epochs > 30:
             self.learning_rate = 1e-4
         model.build_graph()
         return model
