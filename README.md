@@ -18,7 +18,7 @@ In the paper, two models (FFN-SPN model and RNN-SPN model) are implemented and c
 
 # Final Result
 
-This implementation of FFN-SPN model achieves word accuracy of 98.26%, successfully reproduced the paper result (98%).
+This implementation of FFN-SPN model achieves character accuracy of 98.26%, successfully reproduced the paper result (98%).
 
 Here the training and evaluation accuracy chart.
 
