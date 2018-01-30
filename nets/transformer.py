@@ -61,7 +61,7 @@ def spatial_transformer_network(input_fmap, theta, out_dims=None, **kwargs):
     # sample input with grid to get output
     out_fmap = bilinear_sampler(input_fmap, x_s, y_s)
 
-    return out_fmap
+    return out_fmap, x_s, y_s
 
 def get_pixel_value(img, x, y):
     """

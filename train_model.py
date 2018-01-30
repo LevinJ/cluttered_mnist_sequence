@@ -56,6 +56,7 @@ class Train_SPNCNNModel(TrainModel):
         model.keep_prob = 0.75
         if self.max_number_of_epochs > 60:
             self.learning_rate = 1e-4
+            print("adust learning rate {}".format(self.learning_rate ))
         model.build_graph()
         return model
     
