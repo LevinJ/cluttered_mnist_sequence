@@ -119,11 +119,14 @@ class VisualizeModel(PrepareData):
         plt.imshow(res_img[...,::-1])
         
         # here we assume that the spatial transformed image is of size 50 x 50
-        x_s =  (x_s * 50 + 50).astype(np.int32)
-        y_s =  (y_s * 50 + 50).astype(np.int32)
+        img_height, img_width = input_img.shape
         
-        for i in range(50):
-            for j in range(50):
+        half_width, half_height = int(img_width/2),int(img_height/2)
+        x_s =  (x_s * half_width + half_width).astype(np.int32)
+        y_s =  (y_s * half_height + half_height).astype(np.int32)
+        
+        for i in range(len(x_s)):
+            for j in range(len(x_s[0])):
                 x_index = x_s[i,j]
                 y_index = y_s[i,j]
                 cv2.circle(res_img,(x_index,y_index), 1, (0,0,255), -1)
