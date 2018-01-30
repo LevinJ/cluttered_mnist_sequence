@@ -59,7 +59,7 @@ The training took about 1.5 hours on a Nvidia GTX 1080 GPU.
 ## Get training/eval dataset
 
 1. Download dataset  mnist_sequence3_sample_8distortions_9x9.npz from [here](https://github.com/skaae/recurrent-spatial-transformer-code/blob/master/mnist_sequence3_sample_8distortions_9x9.npz)
-2. Save the file to ./data
+2. Save the file to ./data folder (you will have to create this folder first)
 
 ## Train the model
 
