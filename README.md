@@ -10,7 +10,7 @@
 
 This is my attempt to reproduce the result of the [Recurrent Spatial Transformer Networks paper](https://arxiv.org/abs/1509.05329)  
 
-The awesome author of the paper already kindly publicized the [source codes]https://github.com/skaae/recurrent-spatial-transformer-code), and it's implemented in Theano and Lasagne.  
+The awesome author of the paper already kindly publicized the [source codes](https://github.com/skaae/recurrent-spatial-transformer-code), and it's implemented in Theano and Lasagne.  
 
 In this repository, tensorflow and slim are used as the neural network framework, and all the development is done in Python.
 
