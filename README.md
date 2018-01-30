@@ -8,17 +8,17 @@
 
 # Overview  
 
-This is my attemp to reproduce the result of the [Recurrent Spatial Transformer Networks paper](https://arxiv.org/abs/1509.05329)  
+This is my attempt to reproduce the result of the [Recurrent Spatial Transformer Networks paper](https://arxiv.org/abs/1509.05329)  
 
-The awesome autor of the paper already kindly publicized the [source codes]https://github.com/skaae/recurrent-spatial-transformer-code(), and it's implemented in Theano and Lasagne.  
+The awesome author of the paper already kindly publicized the [source codes]https://github.com/skaae/recurrent-spatial-transformer-code), and it's implemented in Theano and Lasagne.  
 
 In this repository, tensorflow and slim are used as the neural network framework, and all the development is done in Python.
 
-In the paper, two models (FFN-SPN model and RNN-SPN model) are implemented and compared. In my tensorflow implementation,  the accuracy of FFN-SPN model alredy almost acheived the accuracy of RNN-SPN observed in the paper, so I didn't pursue to implment RNN-SPN mode. 
+In the paper, two models (FFN-SPN model and RNN-SPN model) are implemented and compared. In my tensorflow implementation,  the accuracy of FFN-SPN model already almost achieved the accuracy of RNN-SPN observed in the paper, so I didn't pursue to implement RNN-SPN mode. 
 
 # Final Result
 
-This implementation of FFN-SPN model achieve word accuracy of 98.26%, succfully reproduced the paper result (98%).
+This implementation of FFN-SPN model achieves word accuracy of 98.26%, successfully reproduced the paper result (98%).
 
 Here the training and evaluation accuracy chart.
 
@@ -28,7 +28,7 @@ Here the training and evaluation accuracy chart.
 Note that training sample number is 60k and evaluation sample number is 10k
 
 
-Below are the charts that demonstrates the image transforamtion done by spatial transformer sub-netowrk, which is automatically learned by back propogation.
+Below are the charts that demonstrate the image transformation  done by spatial transformer sub-network, which is automatically learned by back propagation.
 
 ![vis_1](./images/visualization_1.PNG) 
 
@@ -39,7 +39,7 @@ Note that the left image is the input to spatial transformer network, the red ar
 
 # Model Architecture
 
-The FFN-SPN model architecture is quite straightford, it use spatial transformation network to localize the region of iterest and then use convolutional neural network to segment and classify digits.
+The FFN-SPN model architecture is quite straightforward, it use spatial transformation network to localize the region of interest and then use convolutional neural network to segment and classify digits.
 
 ![arch_1](./images/arhitecture_1.PNG)
 
@@ -87,6 +87,11 @@ def config_training(self):
 Run python ./run_all_checkpoints.py with below settings
 
 
-## Check training result
+## Check training result  
 in a terminal window, type tensorboard --logdir=./logs/SPNCNNModel
+
+
+# Possible future work  
+
+Reduce the height size of spatial neural network (like by 1/4, instead of current 1/2), and see if the model can automatically learns well and narrow down the text region.
 
