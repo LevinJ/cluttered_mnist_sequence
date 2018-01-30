@@ -88,7 +88,7 @@ def config_training(self):
 
 ## Get both train and evaluation accuracy
 
-Run python ./run_all_checkpoints.py with below settings
+Run python ./run_all_checkpoints.py
 
 
 ## Check training result  
