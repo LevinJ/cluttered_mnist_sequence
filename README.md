@@ -64,6 +64,8 @@ The training took about 1.5 hours on a Nvidia GTX 1080 GPU.
 ## Train the model
 
 	1). Run python ./train_model.py  with below setting
+	
+	change the `config_training` method in train_model.py as below:
 
 ```
 def config_training(self):
@@ -74,6 +76,8 @@ def config_training(self):
 
 
   2). Run python ./train_model.py  with below setting
+  
+  	change the `config_training` method in train_model.py as below:
 
 ```
 def config_training(self):
